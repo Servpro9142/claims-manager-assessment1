@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Claims Manager Assessment Form</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+</head>
+<body class="bg-gray-100 p-6">
+  <div class="max-w-3xl mx-auto bg-white p-6 rounded shadow">
+    <h1 class="text-2xl font-bold mb-4 text-center">Claims Manager Assessment</h1>
+    <form id="assessmentForm" class="space-y-4">
+      <div>
+        <label class="block font-medium">Claims Manager Name:</label>
+        <input type="text" name="claims_manager_name" required class="w-full p-2 border rounded"/>
+      </div>
+      <div>
+        <label class="block font-medium">Represents company professionally:</label>
+        <select name="phone_reception_professional" class="w-full p-2 border rounded">
+          <option value="">Select</option>
+          <option value="1">1 - DOES NOT MEET EXPECTATIONS</option>
+          <option value="2">2 - MEETS EXPECTATIONS</option>
+          <option value="3">3 - EXCEEDS EXPECTATIONS</option>
+        </select>
+      </div>
+      <div>
+        <label class="block font-medium">Comments:</label>
+        <textarea name="phone_reception_comments" class="w-full p-2 border rounded" rows="3"></textarea>
+      </div>
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Submit Assessment</button>
+    </form>
+  </div>
+
+  <script>
+    (function() {
+      emailjs.init("z7zaybmbfRFGPLSQy");
+    })();
+
+    document.getElementById("assessmentForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+      let summary = "Claims Manager Assessment Summary\n\n";
+      let total = 0;
+      let count = 0;
+      let claimsManagerName = "";
+
+      const fieldLabels = {
+        claims_manager_name: "Claims Manager Name",
+        phone_reception_professional: "Represents company professionally",
+        phone_reception_comments: "Comments"
+      };
+
+      for (let [key, value] of formData.entries()) {
+        if (value && fieldLabels[key]) {
+          if (key === "claims_manager_name") {
+            claimsManagerName = value;
+            summary += `${fieldLabels[key]}: ${value}\n\n`;
+          } else if (["1", "2", "3"].includes(value)) {
+            total += parseInt(value);
+            count++;
+            const label = value === "1" ? "DOES NOT MEET EXPECTATIONS" : value === "2" ? "MEETS EXPECTATIONS" : "EXCEEDS EXPECTATIONS";
+            summary += `${fieldLabels[key]}: ${label}\n`;
+          } else {
+            summary += `${fieldLabels[key]}: ${value}\n`;
+          }
+        }
+      }
+
+      const averageRating = count > 0 ? (total / count).toFixed(2) : "N/A";
+      summary += `\nAverage Rating: ${averageRating}`;
+
+      const emailParams = {
+        to_email: "robin@servpropuyallup.com",
+        claims_manager_name: claimsManagerName,
+        summary: summary
+      };
+
+      emailjs.send("service_v7qizau", "template_b8mv7zx", emailParams)
+        .then(function() {
+          alert("Assessment submitted successfully! A copy was emailed.");
+          document.getElementById("assessmentForm").reset();
+        }, function(error) {
+          alert("Failed to send email. Error: " + JSON.stringify(error));
+          console.error("EmailJS Error:", error);
+        });
+
+      console.log(summary);
+    });
+  </script>
+</body>
+</html>
