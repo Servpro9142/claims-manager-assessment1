@@ -584,7 +584,7 @@
     </div>
     <script>
         (function() {
-            emailjs.init("YOUR_EMAILJS_USER_ID"); // Replace with your EmailJS User ID
+            emailjs.init("z7zaybmbfRFGPLSQy"); // Replace with your EmailJS User ID
         })();
 
         document.getElementById('assessmentForm').addEventListener('submit', function(e) {
@@ -686,7 +686,7 @@
             };
 
             // Send email
-            emailjs.send('YOUR_EMAILJS_SERVICE_ID', 'YOUR_EMAILJS_TEMPLATE_ID', emailParams)
+            emailjs.send('service_v7qizau', 'template_b8mv7zx', emailParams)
                 .then(function(response) {
                     alert(`Assessment submitted successfully! Email sent to robin@servpropuyallup.com with summary for ${claimsManagerName}.`);
                 }, function(error) {
